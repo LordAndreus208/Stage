@@ -1,0 +1,11 @@
+Codice attacco,Data inizio attacco,Data fine attacco,exit code,Command_Prompt
+T1021.002-2,2024-05-20T15:44:04.182+02:00,2024-05-20T15:46:09.617+02:00,0,Operazione completata
+T1021.002-1,2024-05-20T16:09:35.337+02:00,2024-05-20T16:09:35.427+02:00,2,Impossibile trovare il nome della rete
+T1016-6,2024-05-20T16:09:35.743+02:00,2024-05-20T16:09:37.826+02:00,1,Impossibile eseguire il programma specificato
+T1078.003-4,2024-05-20T16:18:05.205+02:00,2024-05-20T16:18:09.991+02:00,0,Accesso riuscito
+T1059.003-7,2024-05-20T16:26:53.592+02:00,2024-05-20T16:27:04.333+02:00,1,Errore di sintassi nel comando
+T1003.001-5,2024-05-20T16:19:10.880+02:00,2024-05-20T16:19:11.262+02:00,0,Raccolta credenziali completata
+T1203-3,2024-05-20T16:09:29.182+02:00,2024-05-20T16:09:29.277+02:00,3,Errore durante il caricamento del modulo
+T1110.001-2,2024-05-25T16:31:12.972+02:00,2024-05-25T16:32:38.542+02:00,0,Bruteforce riuscito
+T1047-6,2024-05-25T10:51:34.035+02:00,2024-05-25T10:51:40.572+02:00,2,Servizio non trovato
+T1135-4,2024-06-03T10:35:48.775+02:00,2024-06-03T10:36:39.389+02:00,1,Errore nella connessione alla risorsa di rete
