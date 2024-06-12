@@ -56,26 +56,38 @@ class Plots:
 
             # Attack distribution
             attack_values = df[is_attack][column].value_counts()
-            attack_values.plot(kind='bar', ax=axes[i, 0], color='salmon')
+            attack_values.plot(kind='bar', ax=axes[i, 0], color='red')
             axes[i, 0].set_title(f'Distribution of {column} (Attacks)')
             axes[i, 0].tick_params(axis='x', rotation=0)
 
             # Add values on top of the bars for attack distribution
             for p in axes[i, 0].patches:
-                axes[i, 0].annotate(str(p.get_height()), (p.get_x() + p.get_width() / 2., p.get_height()), 
-                                    ha='center', va='center', xytext=(0, 5), textcoords='offset points')
-
+                height = p.get_height()
+                if height > 100:  # Adjust this threshold as needed
+                    axes[i, 0].annotate(str(height), (p.get_x() + p.get_width() / 2., height - 150), 
+                                        ha='center', va='bottom', color='white')
+                else:
+                    axes[i, 0].annotate(str(height), (p.get_x() + p.get_width() / 2., height + 15), 
+                                        ha='center', va='bottom', color='black')
+                    
             # Non-Attack Distribution
             non_attack_values = df[~is_attack][column].value_counts()
-            non_attack_values.plot(kind='bar', ax=axes[i, 1], color='skyblue')  # Same column, different row
+            non_attack_values.plot(kind='bar', ax=axes[i, 1], color='blue')  # Same column, different row
             axes[i, 1].set_title(f'Distribution of {column} (Non-Attacks)')
             axes[i, 1].tick_params(axis='x', rotation=0)
 
-        # Add values on top of the bars for non-attack distribution
+            # Add values on top of the bars for attack distribution
             for p in axes[i, 1].patches:
-                axes[i, 1].annotate(str(p.get_height()), (p.get_x() + p.get_width() / 2., p.get_height()), 
-                                    ha='center', va='center', xytext=(0, 5), textcoords='offset points')
+                height = p.get_height()
+                if height > 100:  # Adjust this threshold as needed
+                    axes[i, 1].annotate(str(height), (p.get_x() + p.get_width() / 2., height - 150), 
+                                        ha='center', va='bottom', color='white')
+                else:
+                    axes[i, 1].annotate(str(height), (p.get_x() + p.get_width() / 2., height + 15), 
+                                        ha='center', va='bottom', color='black')
 
+
+                    
         Plots.plt.tight_layout()
         Plots.plt.show()
 
