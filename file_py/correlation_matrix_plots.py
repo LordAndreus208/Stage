@@ -46,7 +46,7 @@ class CorrelationMatrixPlots:
         
         correlation_matrix = df.corr()
         CorrelationMatrixPlots.plt.figure(figsize=(20, 18))
-        CorrelationMatrixPlots.sns.heatmap(correlation_matrix, annot=True, fmt=".2f", cmap='coolwarm', linewidths=0.5)
+        CorrelationMatrixPlots.sns.heatmap(correlation_matrix, annot=False, fmt=".2f", cmap='coolwarm', linewidths=0.5)
         CorrelationMatrixPlots.plt.xticks(rotation=45, ha='right')
         CorrelationMatrixPlots.plt.yticks(rotation=0)
         CorrelationMatrixPlots.plt.title(title)
