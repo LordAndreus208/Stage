@@ -1,10 +1,9 @@
+from .lib import *
+
 class PreprocessingTrainTestSplit:
     """
     This class provides methods for preprocessing data and splitting it into training and testing sets.
     """
-
-    import numpy as np
-    from sklearn.model_selection import train_test_split
 
     def preprocess_data(df):
         """
@@ -16,7 +15,7 @@ class PreprocessingTrainTestSplit:
         Returns:
         - df: DataFrame, preprocessed data
         """
-        df['_time'] = (df['_time'].astype(PreprocessingTrainTestSplit.np.int64) // 10**9).astype(int)
+        df['_time'] = (df['_time'].astype(np.int64) // 10**9).astype(int)
         return df
 
     def split_data(df, target_column, test_size=0.25, random_state=42):
@@ -35,4 +34,4 @@ class PreprocessingTrainTestSplit:
         df = PreprocessingTrainTestSplit.preprocess_data(df)
         X = df.drop(target_column, axis=1)
         y = df[target_column]
-        return PreprocessingTrainTestSplit.train_test_split(X, y, test_size=test_size, random_state=random_state)
+        return train_test_split(X, y, test_size=test_size, random_state=random_state)

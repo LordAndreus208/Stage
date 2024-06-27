@@ -1,3 +1,5 @@
+from .lib import *
+
 class RunLogParser:
     """A utility class for parsing run logs and processing attacks.
 
@@ -11,8 +13,6 @@ class RunLogParser:
         parse_run_log(file_path): Parses a run log CSV file and returns a list of attacks.
         process_attacks(file_path, df): Processes attacks and updates a DataFrame accordingly.
     """
-    import pandas as pd
-    import csv
 
     @staticmethod
     def parse_run_log(file_path):
@@ -26,15 +26,15 @@ class RunLogParser:
         """
         attacks = []
         with open(file_path, newline='') as csvfile:
-            reader = RunLogParser.csv.DictReader(csvfile, fieldnames=[field.lower().replace(' ', '_') for field in csvfile.readline().strip().split(',')])
+            reader = csv.DictReader(csvfile, fieldnames=[field.lower().replace(' ', '_') for field in csvfile.readline().strip().split(',')])
             for row in reader:
                 attack = {
                     'codice_attacco': row['codice_attacco'],
                     'data_inizio': row['data_inizio_attacco'],
                     'data_fine': row['data_fine_attacco'],
                 }
-                attack['data_inizio'] = RunLogParser.pd.to_datetime(attack['data_inizio'])
-                attack['data_fine'] = RunLogParser.pd.to_datetime(attack['data_fine'])
+                attack['data_inizio'] = pd.to_datetime(attack['data_inizio'])
+                attack['data_fine'] = pd.to_datetime(attack['data_fine'])
                 attacks.append(attack)
         return attacks
 

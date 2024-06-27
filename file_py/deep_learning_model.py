@@ -1,11 +1,9 @@
+from .lib import *
+
 class DeepLearningModel:
     """
     This class provides methods for training and evaluating a deep learning model using Keras.
     """
-
-    from keras.models import Sequential # type: ignore
-    from keras.layers import Dense  # type: ignore
-    from sklearn.metrics import classification_report
 
     def train_deep_learning_model(X_train, y_train, X_test, y_test):
         """
@@ -20,10 +18,10 @@ class DeepLearningModel:
         Returns:
         - model: trained deep learning model
         """
-        model = DeepLearningModel.Sequential([
-            DeepLearningModel.Dense(64, activation='relu', input_shape=(X_train.shape[1],)),
-            DeepLearningModel.Dense(32, activation='relu'),
-            DeepLearningModel.Dense(1, activation='sigmoid')
+        model = Sequential([
+            Dense(64, activation='relu', input_shape=(X_train.shape[1],)),
+            Dense(32, activation='relu'),
+            Dense(1, activation='sigmoid')
         ])
 
         model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
@@ -37,5 +35,5 @@ class DeepLearningModel:
         y_pred = (y_pred_prob > 0.5).astype(int)
 
         print("Classification Report for Deep Learning Model:")
-        print(DeepLearningModel.classification_report(y_test, y_pred))
+        print(classification_report(y_test, y_pred))
         return model

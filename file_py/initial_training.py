@@ -1,15 +1,9 @@
+from .lib import *
+
 class InitialTraining:
     """
     This class provides methods for training and evaluating initial machine learning models.
     """
-
-    from sklearn.tree import DecisionTreeClassifier
-    from sklearn.ensemble import AdaBoostClassifier, ExtraTreesClassifier
-    from xgboost import XGBClassifier
-    from catboost import CatBoostClassifier
-    from sklearn.neural_network import MLPClassifier
-    from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
-    from sklearn.metrics import classification_report
 
     def train_and_evaluate_initial_models(X_train, y_train, X_test, y_test):
         """
@@ -25,20 +19,20 @@ class InitialTraining:
         - results: dict, classification reports for each model
         """
         algorithms = {
-            'Decision Tree': InitialTraining.DecisionTreeClassifier(),
-            'AdaBoost': InitialTraining.AdaBoostClassifier(),
-            'XGBoost': InitialTraining.XGBClassifier(use_label_encoder=False, eval_metric='logloss'),
-            'CatBoost': InitialTraining.CatBoostClassifier(verbose=0),
-            'MLP': InitialTraining.MLPClassifier(max_iter=1000),
-            'Quadratic Discriminant Analysis': InitialTraining.QuadraticDiscriminantAnalysis(reg_param=0.1),
-            'Extra Trees': InitialTraining.ExtraTreesClassifier()
+            'Decision Tree': DecisionTreeClassifier(),
+            'AdaBoost': AdaBoostClassifier(),
+            'XGBoost': XGBClassifier(use_label_encoder=False, eval_metric='logloss'),
+            'CatBoost': CatBoostClassifier(verbose=0),
+            'MLP': MLPClassifier(max_iter=1000),
+            'Quadratic Discriminant Analysis': QuadraticDiscriminantAnalysis(reg_param=0.1),
+            'Extra Trees': ExtraTreesClassifier()
         }
 
         results = {}
         for name, model in algorithms.items():
             model.fit(X_train, y_train)
             y_pred = model.predict(X_test)
-            results[name] = InitialTraining.classification_report(y_test, y_pred, output_dict=True)
+            results[name] = classification_report(y_test, y_pred, output_dict=True)
             print(f"\n{name} Classification Report:")
-            print(InitialTraining.classification_report(y_test, y_pred))
+            print(classification_report(y_test, y_pred))
         return results

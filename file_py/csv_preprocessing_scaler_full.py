@@ -1,3 +1,5 @@
+from .lib import *
+
 class CsvPreprocessingScalerFull:
     """A utility class for preprocessing CSV data and applying scaling.
 
@@ -20,8 +22,6 @@ class CsvPreprocessingScalerFull:
         
         stdScaler(df): Applies standard scaling to the features of a DataFrame.
     """
-    import pandas as pd
-    from sklearn.preprocessing import StandardScaler, LabelEncoder
 
     def read_csv_file(file_path):
         """Reads a CSV file and returns a DataFrame.
@@ -33,19 +33,18 @@ class CsvPreprocessingScalerFull:
             pandas.DataFrame: The DataFrame containing the CSV data.
         """
         try:
-            df = CsvPreprocessingScalerFull.pd.read_csv(file_path, low_memory=False)
+            df = pd.read_csv(file_path, low_memory=False)
             return df
         except FileNotFoundError:
             print(f"File {file_path} not found.")
-            return CsvPreprocessingScalerFull.pd.DataFrame()
-        except CsvPreprocessingScalerFull.pd.errors.EmptyDataError:
+            return pd.DataFrame()
+        except pd.errors.EmptyDataError:
             print(f"File {file_path} is empty.")
-            return CsvPreprocessingScalerFull.pd.DataFrame()
+            return pd.DataFrame()
         except Exception as e:
             print(f"An error occurred while reading {file_path}: {e}")
-            return CsvPreprocessingScalerFull.pd.DataFrame()
-        
-        
+            return pd.DataFrame()
+         
     def drop_unnecessary_columns(df, columns_to_drop):
         """Drops specified columns from a DataFrame.
 
@@ -69,7 +68,7 @@ class CsvPreprocessingScalerFull:
             None
         """
         try:
-            df[column] = CsvPreprocessingScalerFull.pd.to_datetime(df[column])
+            df[column] = pd.to_datetime(df[column])
         except Exception as e:
             print(f"An error occurred while converting {column} to datetime: {e}")
 
@@ -82,8 +81,8 @@ class CsvPreprocessingScalerFull:
         Returns:
             pandas.DataFrame: The preprocessed DataFrame.
         """
-        # Apply get_only_mitre_attacks_rows to keep only the relevant rows
-        df = df.dropna(subset=["RuleAnnotation.mitre_attack.id"])
+        # Keep only the relevant rows
+        df = df.dropna(subset=["RuleAnnotation.mitre_attack.id", "signature"])
 
         # Drop columns with more than 2000 missing values
         df = df.drop(columns=df.columns[df.isnull().sum() > 2000])
@@ -97,6 +96,40 @@ class CsvPreprocessingScalerFull:
         # Convert '_time' column to datetime
         CsvPreprocessingScalerFull.convert_to_datetime(df, '_time')
         
+        # Split 'RuleAnnotation.mitre_attack.id' column values by newline characters
+        df['RuleAnnotation.mitre_attack.id'] = df['RuleAnnotation.mitre_attack.id'].str.split('\n')
+        
+        # Explode rows with lists of values into multiple separate rows
+        df = df.explode('RuleAnnotation.mitre_attack.id')
+        
+        df = df[["signature", "RuleAnnotation.mitre_attack.id", "_time", "parent_process_id", "process_id", 
+                "severity_id", "EventType", "tag"]]
+        return df
+
+    def RawPreprocessingWSig(df):
+        """Performs raw preprocessing steps on a DataFrame.
+
+        Args:
+            df (pandas.DataFrame): The DataFrame to preprocess.
+
+        Returns:
+            pandas.DataFrame: The preprocessed DataFrame.
+        """
+
+        # Keep only the relevant rows
+        df = df.dropna(subset=["RuleAnnotation.mitre_attack.id", "signature"])
+
+        # Drop columns with more than 2000 missing values
+        df = df.drop(columns=df.columns[df.isnull().sum() > 2000])
+        
+        # Drop specific unnecessary columns
+        columns_to_drop = ["_raw", "date", "date_hour", "date_mday", "date_minute", "date_month", "date_second", 
+                        "date_wday", "date_year", "date_zone", "RuleAnnotation", "Timestamp", 
+                        "tag::eventtype", "AppVersion"]
+        df = CsvPreprocessingScaler.drop_unnecessary_columns(df, columns_to_drop)
+        
+        # Convert '_time' column to datetime
+        CsvPreprocessingScaler.convert_to_datetime(df, '_time')
         
         # Split 'RuleAnnotation.mitre_attack.id' column values by newline characters
         df['RuleAnnotation.mitre_attack.id'] = df['RuleAnnotation.mitre_attack.id'].str.split('\n')
@@ -105,7 +138,7 @@ class CsvPreprocessingScalerFull:
         df = df.explode('RuleAnnotation.mitre_attack.id')
         
         df = df[["RuleAnnotation.mitre_attack.id", "_time", "parent_process_id", "process_id", 
-                "severity_id", "EventType", "tag"]]
+                "severity_id", "EventType", "tag","signature"]]
         return df
 
     def LEPreprocessing(df):
@@ -119,9 +152,9 @@ class CsvPreprocessingScalerFull:
         """
 
         df = CsvPreprocessingScalerFull.RawPreprocessing(df)
-        columns_to_encode_for_LE = ["RuleAnnotation.mitre_attack.id", "parent_process_id", "process_id", 
+        columns_to_encode_for_LE = ["signature", "RuleAnnotation.mitre_attack.id", "parent_process_id", "process_id", 
                             "severity_id", "EventType", "tag"]
-        label_encoder = CsvPreprocessingScalerFull.LabelEncoder()
+        label_encoder = LabelEncoder()
 
         for column in columns_to_encode_for_LE:
             try:
@@ -142,13 +175,13 @@ class CsvPreprocessingScalerFull:
         """
 
         df = CsvPreprocessingScalerFull.RawPreprocessing(df)
-        columns_to_encode_for_OH = ["RuleAnnotation.mitre_attack.id", "severity_id", "EventType", "tag"]
+        columns_to_encode_for_OH = ["signature", "RuleAnnotation.mitre_attack.id", "severity_id", "EventType", "tag"]
 
         # Replace newlines in 'tag' column
         df['tag'] = df['tag'].str.replace('\n', '_')
 
         try:
-            df = CsvPreprocessingScalerFull.pd.get_dummies(df, columns=columns_to_encode_for_OH)
+            df = pd.get_dummies(df, columns=columns_to_encode_for_OH)
         except Exception as e:
             print(f"An error occurred during OneHotEncoding: {e}")
         
@@ -163,10 +196,10 @@ class CsvPreprocessingScalerFull:
         Returns:
             pandas.DataFrame: The scaled DataFrame.
         """
-        scaler = CsvPreprocessingScalerFull.StandardScaler()
+        scaler = StandardScaler()
         try:
             df_scaled = scaler.fit_transform(df.drop(columns="_time"))
-            return CsvPreprocessingScalerFull.pd.merge(CsvPreprocessingScalerFull.pd.DataFrame(df_scaled, columns=df.drop(columns="_time").columns), df["_time"], left_index=True, right_index=True)
+            return pd.merge(pd.DataFrame(df_scaled, columns=df.drop(columns="_time").columns), df["_time"], left_index=True, right_index=True)
         except Exception as e:
             print(f"An error occurred during standard scaling: {e}")
             return df

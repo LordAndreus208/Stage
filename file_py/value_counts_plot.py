@@ -1,3 +1,5 @@
+from .lib import *
+
 class ValueCountsPlot:
     """
     This class generates bar plots to visualize the count of values in a specified column of a DataFrame.
@@ -20,9 +22,6 @@ class ValueCountsPlot:
     ```
 
     """
-    
-    import matplotlib.pyplot as plt
-    import math
 
     def plot_value_counts_per_unique(df):
         """
@@ -48,10 +47,10 @@ class ValueCountsPlot:
         num_plots = len(unique_values)
 
         # Determiniamo il numero di righe e colonne per la griglia
-        rows = ValueCountsPlot.math.ceil(num_plots / cols)  # Calcola il numero di righe necessario
+        rows = math.ceil(num_plots / cols)  # Calcola il numero di righe necessario
 
         # Creiamo i subplot
-        fig, axes = ValueCountsPlot.plt.subplots(rows, cols, figsize=(figsize_multiplier[0] * cols, figsize_multiplier[1] * rows))
+        fig, axes = plt.subplots(rows, cols, figsize=(figsize_multiplier[0] * cols, figsize_multiplier[1] * rows))
 
         # Se c'è solo un valore unico, axes non è un array bidimensionale, quindi lo convertiamo
         if num_plots == 1:
@@ -82,5 +81,5 @@ class ValueCountsPlot:
             fig.delaxes(axes.flat[i])
 
         # Aggiustiamo il layout
-        ValueCountsPlot.plt.tight_layout()
-        ValueCountsPlot.plt.show()
+        plt.tight_layout()
+        plt.show()

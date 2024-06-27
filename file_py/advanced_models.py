@@ -1,10 +1,9 @@
+from .lib import *
+
 class AdvancedModels:
     """
     This class provides methods for training and evaluating advanced machine learning models.
     """
-
-    import xgboost as xgb
-    from sklearn.metrics import accuracy_score, roc_auc_score, classification_report
 
     def train_xgboost(X_train, y_train, X_test, y_test):
         """
@@ -19,8 +18,8 @@ class AdvancedModels:
         Returns:
         - bst: trained XGBoost model
         """
-        dtrain = AdvancedModels.xgb.DMatrix(X_train, label=y_train)
-        dtest = AdvancedModels.xgb.DMatrix(X_test, label=y_test)
+        dtrain = xgb.DMatrix(X_train, label=y_train)
+        dtest = xgb.DMatrix(X_test, label=y_test)
 
         val_pos = y_train[y_train == 1].count()
         val_neg = y_train[y_train == 0].count()
@@ -39,14 +38,14 @@ class AdvancedModels:
         num_round = 200
 
         evals = [(dtrain, 'train'), (dtest, 'eval')]
-        bst = AdvancedModels.xgb.train(params, dtrain, num_round, evals, early_stopping_rounds=10)
+        bst = xgb.train(params, dtrain, num_round, evals, early_stopping_rounds=10)
 
         y_pred_prob = bst.predict(dtest)
         y_pred = (y_pred_prob > 0.5).astype(int)
 
-        accuracy = AdvancedModels.accuracy_score(y_test, y_pred)
-        roc_auc = AdvancedModels.roc_auc_score(y_test, y_pred_prob)
+        accuracy = accuracy_score(y_test, y_pred)
+        roc_auc = roc_auc_score(y_test, y_pred_prob)
         print(f'Accuracy: {accuracy * 100:.2f}%')
         print(f'ROC AUC: {roc_auc:.2f}')
-        print(AdvancedModels.classification_report(y_test, y_pred))
+        print(classification_report(y_test, y_pred))
         return bst
